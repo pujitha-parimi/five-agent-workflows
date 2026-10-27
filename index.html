@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Five Agent Workflows</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: #f1f5f9;
+    }
+
+    header {
+      padding: 28px 8%;
+      border-bottom: 1px solid #27324a;
+    }
+
+    header h1 {
+      margin: 0;
+      color: #8b9cff;
+    }
+
+    header p,
+    .subtitle {
+      color: #aab5cc;
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 35px auto;
+      padding: 0 20px;
+    }
+
+    .intro {
+      margin-bottom: 28px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: #151d32;
+      border: 1px solid #2b3855;
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    .card h2 {
+      font-size: 19px;
+      color: #aab8ff;
+    }
+
+    .card p {
+      color: #c1cadb;
+      line-height: 1.6;
+    }
+
+    .card button {
+      width: 100%;
+    }
+
+    .card.selected {
+      border-color: #8190ff;
+      box-shadow: 0 0 0 1px #8190ff;
+    }
+
+    .workspace {
+      margin-top: 28px;
+      padding: 24px;
+      background: #151d32;
+      border: 1px solid #354362;
+      border-radius: 14px;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 8px;
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 14px;
+      border: 1px solid #354362;
+      border-radius: 8px;
+      background: #0b1020;
+      color: #f1f5f9;
+      font: inherit;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: 2px solid #8190ff;
+    }
+
+    button {
+      background: #6678f5;
+      color: white;
+      border: 0;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #8190ff;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #runButton {
+      margin-top: 16px;
+    }
+
+    #status {
+      margin-top: 18px;
+      color: #c1cadb;
+      line-height: 1.6;
+    }
+
+    #output {
+      margin-top: 18px;
+      padding: 20px;
+      background: #0b1020;
+      border: 1px solid #354362;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.7;
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #8c9ab3;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Five Agent Workflows</h1>
+    <p>Explore five patterns for building AI agent systems.</p>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h2>Workflow Patterns</h2>
+      <p class="subtitle">
+        Select a pattern, enter a question, and run it with Gemini AI.
+      </p>
+    </section>
+
+    <section class="grid">
+      <article class="card selected" data-pattern="chain">
+        <h2>1. Prompt Chaining</h2>
+        <p>Processes a task through sequential steps, using each step's result in the next.</p>
+        <button type="button" onclick="selectPattern('chain')">
+          Select Pattern
+        </button>
+      </article>
+
+      <article class="card" data-pattern="routing">
+        <h2>2. Routing</h2>
+        <p>Classifies a request and directs it to the appropriate response approach.</p>
+        <button type="button" onclick="selectPattern('routing')">
+          Select Pattern
+        </button>
+      </article>
+
+      <article class="card" data-pattern="parallel">
+        <h2>3. Parallelization</h2>
+        <p>Examines a request from multiple perspectives and combines the findings.</p>
+        <button type="button" onclick="selectPattern('parallel')">
+          Select Pattern
+        </button>
+      </article>
+
+      <article class="card" data-pattern="orchestrator">
+        <h2>4. Orchestrator-Worker</h2>
+        <p>Breaks a complex task into subtasks and combines their results.</p>
+        <button type="button" onclick="selectPattern('orchestrator')">
+          Select Pattern
+        </button>
+      </article>
+
+      <article class="card" data-pattern="evaluator">
+        <h2>5. Evaluator-Optimizer</h2>
+        <p>Evaluates a draft and improves it for clarity and completeness.</p>
+        <button type="button" onclick="selectPattern('evaluator')">
+          Select Pattern
+        </button>
+      </article>
+    </section>
+
+    <section class="workspace">
+      <h2>Try a Workflow</h2>
+      <p class="subtitle">
+        Selected pattern: <strong id="selectedName">Prompt Chaining</strong>
+      </p>
+
+      <form id="workflowForm">
+        <label for="prompt">Enter your question or task</label>
+
+        <textarea
+          id="prompt"
+          maxlength="4000"
+          required
+          placeholder="Example: Explain how Python functions work with a simple example."
+        ></textarea>
+
+        <button id="runButton" type="submit">
+          Run with Gemini
+        </button>
+      </form>
+
+      <p id="status" role="status"></p>
+      <section id="output" aria-live="polite"></section>
+    </section>
+  </main>
+
+  <footer>
+    Five Agent Workflows · Powered by Gemini API
+  </footer>
+
+  <script>
+    let selectedPattern = "chain";
+
+    const patternNames = {
+      chain: "Prompt Chaining",
+      routing: "Routing",
+      parallel: "Parallelization",
+      orchestrator: "Orchestrator-Worker",
+      evaluator: "Evaluator-Optimizer"
+    };
+
+    function selectPattern(pattern) {
+      selectedPattern = pattern;
+
+      document.querySelectorAll(".card").forEach((card) => {
+        card.classList.toggle(
+          "selected",
+          card.dataset.pattern === pattern
+        );
+      });
+
+      document.getElementById("selectedName").textContent =
+        patternNames[pattern];
+
+      document.getElementById("status").textContent = "";
+      document.getElementById("output").style.display = "none";
+    }
+
+    document
+      .getElementById("workflowForm")
+      .addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const prompt = document.getElementById("prompt").value.trim();
+        const runButton = document.getElementById("runButton");
+        const status = document.getElementById("status");
+        const output = document.getElementById("output");
+
+        if (!prompt) {
+          status.textContent = "Please enter a question first.";
+          return;
+        }
+
+        runButton.disabled = true;
+        runButton.textContent = "Generating...";
+        status.textContent = "Sending your request to Gemini...";
+        output.style.display = "none";
+        output.textContent = "";
+
+        try {
+          const response = await fetch("/api/generate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              pattern: selectedPattern,
+              prompt: prompt
+            })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+          }
+
+          output.textContent = data.output;
+          output.style.display = "block";
+          status.textContent =
+            "Gemini response received for " +
+            patternNames[selectedPattern] + ".";
+
+        } catch (error) {
+          status.textContent =
+            "Could not get a response: " +
+            (error instanceof Error ? error.message : "Unknown error") +
+            ". Make sure the deployed API is configured correctly.";
+        } finally {
+          runButton.disabled = false;
+          runButton.textContent = "Run with Gemini";
+        }
+      });
+  </script>
+</body>
+</html>
