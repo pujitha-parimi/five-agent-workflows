@@ -72,7 +72,7 @@ export default async function handler(
   });
 
   const result = await generateText({
-    model: googleProvider("gemini-3.8-flash"),
+    model: googleProvider("gemini-2.5-flash"),
     system: instructions[pattern]!,
     prompt: prompt.trim(),
   });
